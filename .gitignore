@@ -1,6 +1,6 @@
 # user define
 /cmake-build-debug
-/VS-cmake-build-debug/.vs
+/VS-cmake-build-debug
 /.idea
 
 

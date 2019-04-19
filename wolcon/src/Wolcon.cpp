@@ -3,7 +3,8 @@
 #include <tchar.h>
 
 
-void buttonPress(BYTE vkCode) {
+void buttonPress(BYTE vkCode)
+{
     // Simulate a key press
     keybd_event(vkCode,
                 0x45,
@@ -18,7 +19,8 @@ void buttonPress(BYTE vkCode) {
 
 }
 
-void volumeButton(bool up) {
+void volumeButton(bool up)
+{
     if (up)
         buttonPress(VK_VOLUME_UP);
     else
@@ -27,10 +29,14 @@ void volumeButton(bool up) {
 
 POINT p{};
 
-void changeVolume(bool volUp) {
+bool changeVolume(bool volUp)
+{
     GetCursorPos(&p);
-    if (p.y > (GetSystemMetrics(SM_CYSCREEN) - 3))
+    if (p.y > (GetSystemMetrics(SM_CYSCREEN) - 3)) {
         volumeButton(volUp);
+        return true;
+    }
+    return false;
 }
 
 HHOOK          mouseHook;
@@ -39,13 +45,15 @@ MSLLHOOKSTRUCT *mStruct;
 bool corner;
 bool mButtonPress;
 
-LRESULT CALLBACK mouseProc(int nCode, WPARAM wParam, LPARAM lParam) {
+LRESULT CALLBACK mouseProc(int nCode, WPARAM wParam, LPARAM lParam)
+{
 
     if (nCode == HC_ACTION) {
 
         if (wParam == WM_MOUSEWHEEL) {
             mStruct = (MSLLHOOKSTRUCT *) lParam;
-            changeVolume((static_cast<int>(mStruct->mouseData) >> 16) > 0);
+            if (changeVolume((static_cast<int>(mStruct->mouseData) >> 16) > 0))
+                return 1;
         }
 
         if (wParam == WM_MOUSEMOVE) {
@@ -67,7 +75,7 @@ LRESULT CALLBACK mouseProc(int nCode, WPARAM wParam, LPARAM lParam) {
     return CallNextHookEx(mouseHook, nCode, wParam, lParam);
 }
 
-int CALLBACK  WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,LPSTR lpCmdLine,int nShowCmd)
+int CALLBACK  WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nShowCmd)
 {
     corner       = false;
     mButtonPress = false;
