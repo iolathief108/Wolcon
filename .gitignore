@@ -1,7 +1,8 @@
-#user define
+# user define
 /cmake-build-debug
-/VS-cmake-build-debug
+/VS-cmake-build-debug/.vs
 /.idea
+
 
 # Prerequisites
 *.d

@@ -3,9 +3,4 @@ project(Wolcon)
 
 set(CMAKE_CXX_STANDARD 14)
 
-file(GLOB SOURCES
-        src/*.cpp
-        src/*.h)
-
-add_executable(Wolcon WIN32
-        ${SOURCES})
+add_subdirectory(wolcon)
