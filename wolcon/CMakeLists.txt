@@ -5,5 +5,4 @@ file(GLOB SOURCES
         src/*.cpp
         src/*.h)
 
-add_executable(Wolcon WIN32
-        ${SOURCES})
+add_executable(Wolcon WIN32 ${SOURCES})
