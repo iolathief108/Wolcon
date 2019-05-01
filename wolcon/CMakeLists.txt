@@ -11,5 +11,7 @@ file(GLOB SOURCES
         src/Wolcon/Events/*.h
         src/Wolcon/Events/*.cpp)
 
+add_definitions(-DWL_PLATFORM_WINDOWS)
+
 add_executable(Wolcon WIN32
         ${SOURCES})
