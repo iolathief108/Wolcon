@@ -2,6 +2,7 @@
 /cmake-build-debug
 /VS-cmake-build-debug
 /.idea
+/build
 *.ico
 
 # Prerequisites
