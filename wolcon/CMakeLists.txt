@@ -5,9 +5,8 @@ file(GLOB SOURCES
         src/*.cpp
         src/*.h)
 
-set(DEBUG true)
+set(DEBUG false)
 
-#add_executable(Wolcon WIN32 ${SOURCES})
 if (${DEBUG})
     add_executable(Wolcon ${SOURCES})
     add_compile_definitions(CONSOLE)

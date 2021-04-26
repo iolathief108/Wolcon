@@ -125,17 +125,53 @@ LRESULT CALLBACK mouseProc(int nCode, WPARAM wParam, LPARAM lParam) {
     return CallNextHookEx(mouseHook, nCode, wParam, lParam);
 }
 
+
+HHOOK kb_hook;
+PKBDLLHOOKSTRUCT kp;
+DWORD virtualKey;
+
+LRESULT CALLBACK kb_proc(int nCode, WPARAM wParam, LPARAM lParam) {
+
+    if (nCode == HC_ACTION) {
+        kp = (PKBDLLHOOKSTRUCT) lParam;
+
+        virtualKey = kp->vkCode;
+
+        if ((wParam == WM_KEYDOWN || wParam == WM_SYSKEYDOWN)) {
+            if (virtualKey == VK_F6){
+                keyDownUp(VK_MEDIA_PREV_TRACK);
+                return 1;
+            }
+            else if (virtualKey == VK_F7){
+                keyDownUp(VK_MEDIA_PLAY_PAUSE);
+                return 1;
+            }
+            else if (virtualKey == VK_F8){
+                keyDownUp(VK_MEDIA_NEXT_TRACK);
+                return 1;
+            }
+        }
+    }
+
+
+    return CallNextHookEx(kb_hook, nCode, wParam, lParam);
+}
+
 #ifdef CONSOLE
-int main() {
+
+int main()
 #else
-int CALLBACK  WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nShowCmd) {
+int CALLBACK  WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nShowCmd)
 #endif
+{
+    // Initializing
     topLeftConer = false;
     mButtonPress = false;
     taskViewPerformed = false;
     tView = false;
 
     mouseHook = SetWindowsHookEx(WH_MOUSE_LL, mouseProc, 0, 0);
+    kb_hook = SetWindowsHookEx(WH_KEYBOARD_LL, kb_proc, 0, 0);
 
     MSG msg{};
     while (GetMessage(&msg, 0, 0, 0) != 0) {
@@ -143,5 +179,6 @@ int CALLBACK  WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdL
         DispatchMessage(&msg);
     }
     UnhookWindowsHookEx(mouseHook);
+    UnhookWindowsHookEx(kb_hook);
     return 0;
 }
