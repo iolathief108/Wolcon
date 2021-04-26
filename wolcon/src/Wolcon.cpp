@@ -137,7 +137,7 @@ LRESULT CALLBACK kb_proc(int nCode, WPARAM wParam, LPARAM lParam) {
 
         virtualKey = kp->vkCode;
 
-        if ((wParam == WM_KEYDOWN || wParam == WM_SYSKEYDOWN)) {
+        if (wParam == WM_KEYDOWN || wParam == WM_SYSKEYDOWN) {
             if (virtualKey == VK_F6){
                 keyDownUp(VK_MEDIA_PREV_TRACK);
                 return 1;
@@ -148,6 +148,16 @@ LRESULT CALLBACK kb_proc(int nCode, WPARAM wParam, LPARAM lParam) {
             }
             else if (virtualKey == VK_F8){
                 keyDownUp(VK_MEDIA_NEXT_TRACK);
+                return 1;
+            }
+        } else if (wParam == WM_KEYUP || wParam == WM_SYSKEYUP) {
+            if (virtualKey == VK_F6){
+                return 1;
+            }
+            else if (virtualKey == VK_F7){
+                return 1;
+            }
+            else if (virtualKey == VK_F8){
                 return 1;
             }
         }
