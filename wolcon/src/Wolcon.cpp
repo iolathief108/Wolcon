@@ -144,8 +144,9 @@ LRESULT CALLBACK mouseProc(int nCode, WPARAM wParam, LPARAM lParam) {
 
 
         if (wParam == WM_MBUTTONUP) {
-            if (mButtonPress && topLeftConer)
+            if (mButtonPress && topLeftConer) {
                 PostQuitMessage(0);
+            }
             mButtonPress = false;
         }
     }
@@ -169,31 +170,29 @@ LRESULT CALLBACK kb_proc(int nCode, WPARAM wParam, LPARAM lParam) {
                 keyDownUp(VK_MEDIA_PREV_TRACK);
                 return 1;
             }
-            else if (virtualKey == VK_F7) {
+            if (virtualKey == VK_F7) {
                 keyDownUp(VK_MEDIA_PLAY_PAUSE);
                 return 1;
             }
-            else if (virtualKey == VK_F8) {
+            if (virtualKey == VK_F8) {
                 keyDownUp(VK_MEDIA_NEXT_TRACK);
                 return 1;
             }
-            else if (virtualKey == VK_PRIOR) {
+            if (virtualKey == VK_PRIOR) {
                 // goto previous desktop, press win + ctrl + left
                 keyDown(VK_LWIN);
                 keyDown(VK_LCONTROL);
                 keyDown(VK_LEFT);
-                Sleep(70);
                 keyUp(VK_LEFT);
                 keyUp(VK_LCONTROL);
                 keyUp(VK_LWIN);
                 return 1;
             }
-            else if (virtualKey == VK_NEXT) {
+            if (virtualKey == VK_NEXT) {
                 // goto next desktop, press win + ctrl + right
                 keyDown(VK_LWIN);
                 keyDown(VK_LCONTROL);
                 keyDown(VK_RIGHT);
-                Sleep(70);
                 keyUp(VK_RIGHT);
                 keyUp(VK_LCONTROL);
                 keyUp(VK_LWIN);
@@ -204,16 +203,16 @@ LRESULT CALLBACK kb_proc(int nCode, WPARAM wParam, LPARAM lParam) {
             if (virtualKey == VK_F6) {
                 return 1;
             }
-            else if (virtualKey == VK_F7) {
+            if (virtualKey == VK_F7) {
                 return 1;
             }
-            else if (virtualKey == VK_F8) {
+            if (virtualKey == VK_F8) {
                 return 1;
             }
-            else if (virtualKey == VK_PRIOR) {
+            if (virtualKey == VK_PRIOR) {
                 return 1;
             }
-            else if (virtualKey == VK_NEXT) {
+            if (virtualKey == VK_NEXT) {
                 return 1;
             }
         }
