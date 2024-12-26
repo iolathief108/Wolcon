@@ -5,7 +5,9 @@
 *.ico
 
 # Prerequisites
-#/VS-cmake-build-debug
+/VS-cmake-build-debug
+#/cmake-build-release-visual-studio
+#/cmake-build-release-mingw
 *.d
 
 # Compiled Object files

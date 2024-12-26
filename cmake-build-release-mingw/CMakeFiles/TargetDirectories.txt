@@ -1,0 +1,5 @@
+C:/Users/iolat/Desktop/Wolcon/cmake-build-release-mingw/CMakeFiles/edit_cache.dir
+C:/Users/iolat/Desktop/Wolcon/cmake-build-release-mingw/CMakeFiles/rebuild_cache.dir
+C:/Users/iolat/Desktop/Wolcon/cmake-build-release-mingw/wolcon/CMakeFiles/Wolcon.dir
+C:/Users/iolat/Desktop/Wolcon/cmake-build-release-mingw/wolcon/CMakeFiles/edit_cache.dir
+C:/Users/iolat/Desktop/Wolcon/cmake-build-release-mingw/wolcon/CMakeFiles/rebuild_cache.dir
