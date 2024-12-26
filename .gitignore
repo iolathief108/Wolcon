@@ -5,6 +5,7 @@
 *.ico
 
 # Prerequisites
+#/VS-cmake-build-debug
 *.d
 
 # Compiled Object files
