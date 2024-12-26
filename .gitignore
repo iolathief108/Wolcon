@@ -6,8 +6,10 @@
 
 # Prerequisites
 /VS-cmake-build-debug
-#/cmake-build-release-visual-studio
-#/cmake-build-release-mingw
+/cmake-build-release-visual-studio
+/cmake-build-release-mingw
+/cmake-build-debug
+/cmake-build-*
 *.d
 
 # Compiled Object files
