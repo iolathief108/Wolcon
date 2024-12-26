@@ -3,6 +3,15 @@
 #include <tchar.h>
 #include <thread>
 
+bool IsScrollLockOn() {
+    if ((GetKeyState(VK_SCROLL) & 0x0001) != 0) {
+        return true;
+    }
+    else {
+        return false;
+    }
+}
+
 void keyDownUp(BYTE vkCode) {
     // Simulate a key press
     keybd_event(vkCode,
@@ -15,8 +24,28 @@ void keyDownUp(BYTE vkCode) {
                 0x45,
                 KEYEVENTF_EXTENDEDKEY | KEYEVENTF_KEYUP,
                 0);
-
 }
+
+void SetScrollLock(BOOL bState) {
+    BYTE keyState[256];
+
+    GetKeyboardState((LPBYTE)&keyState);
+    if ((bState && !(keyState[VK_SCROLL] & 1)) ||
+        (!bState && (keyState[VK_SCROLL] & 1))) {
+        // Simulate a key press
+        keybd_event(VK_SCROLL,
+                    0x45,
+                    KEYEVENTF_EXTENDEDKEY | 0,
+                    0);
+
+        // Simulate a key release
+        keybd_event(VK_SCROLL,
+                    0x45,
+                    KEYEVENTF_EXTENDEDKEY | KEYEVENTF_KEYUP,
+                    0);
+    }
+}
+
 
 void keyDown(BYTE vkCode) {
     // Simulate a key press
@@ -38,7 +67,7 @@ POINT p{};
 
 bool taskViewPerformed;
 unsigned short count;
-std::thread *tvThread;
+std::thread* tvThread;
 bool tView;
 
 void taskViewRunner() {
@@ -57,7 +86,8 @@ bool wheelHandle(bool volUp) {
         else
             keyDownUp(VK_VOLUME_DOWN);
         return true;
-    } else if (volUp && p.y < 3 && p.x > GetSystemMetrics(SM_CXSCREEN) - 3 && p.x < GetSystemMetrics(SM_CXSCREEN)) {
+    }
+    else if (volUp && p.y < 3 && p.x > GetSystemMetrics(SM_CXSCREEN) - 3 && p.x < GetSystemMetrics(SM_CXSCREEN)) {
         count = 0;
         if (!taskViewPerformed) {
             keybd_event(VK_LWIN,
@@ -91,23 +121,21 @@ bool wheelHandle(bool volUp) {
 }
 
 HHOOK mouseHook;
-MSLLHOOKSTRUCT *mStruct;
+MSLLHOOKSTRUCT* mStruct;
 
 bool topLeftConer;
 bool mButtonPress;
 
 LRESULT CALLBACK mouseProc(int nCode, WPARAM wParam, LPARAM lParam) {
-
     if (nCode == HC_ACTION) {
-
         if (wParam == WM_MOUSEWHEEL) {
-            mStruct = (MSLLHOOKSTRUCT *) lParam;
+            mStruct = (MSLLHOOKSTRUCT*)lParam;
             if (wheelHandle((static_cast<int>(mStruct->mouseData) >> 16) > 0))
                 return 1;
         }
 
         if (wParam == WM_MOUSEMOVE) {
-            mStruct = (MSLLHOOKSTRUCT *) lParam;
+            mStruct = (MSLLHOOKSTRUCT*)lParam;
             topLeftConer = static_cast<int>(mStruct->pt.x) <= 0 && static_cast<int>(mStruct->pt.y) <= 0;
         }
 
@@ -131,47 +159,73 @@ PKBDLLHOOKSTRUCT kp;
 DWORD virtualKey;
 
 LRESULT CALLBACK kb_proc(int nCode, WPARAM wParam, LPARAM lParam) {
-
-    if (nCode == HC_ACTION) {
-        kp = (PKBDLLHOOKSTRUCT) lParam;
+    if (nCode == HC_ACTION && !IsScrollLockOn()) {
+        kp = (PKBDLLHOOKSTRUCT)lParam;
 
         virtualKey = kp->vkCode;
 
         if (wParam == WM_KEYDOWN || wParam == WM_SYSKEYDOWN) {
-            if (virtualKey == VK_F6){
+            if (virtualKey == VK_F6) {
                 keyDownUp(VK_MEDIA_PREV_TRACK);
                 return 1;
             }
-            else if (virtualKey == VK_F7){
+            else if (virtualKey == VK_F7) {
                 keyDownUp(VK_MEDIA_PLAY_PAUSE);
                 return 1;
             }
-            else if (virtualKey == VK_F8){
+            else if (virtualKey == VK_F8) {
                 keyDownUp(VK_MEDIA_NEXT_TRACK);
                 return 1;
             }
-        } else if (wParam == WM_KEYUP || wParam == WM_SYSKEYUP) {
-            if (virtualKey == VK_F6){
+            else if (virtualKey == VK_PRIOR) {
+                // goto previous desktop, press win + ctrl + left
+                keyDown(VK_LWIN);
+                keyDown(VK_LCONTROL);
+                keyDown(VK_LEFT);
+                Sleep(70);
+                keyUp(VK_LEFT);
+                keyUp(VK_LCONTROL);
+                keyUp(VK_LWIN);
                 return 1;
             }
-            else if (virtualKey == VK_F7){
+            else if (virtualKey == VK_NEXT) {
+                // goto next desktop, press win + ctrl + right
+                keyDown(VK_LWIN);
+                keyDown(VK_LCONTROL);
+                keyDown(VK_RIGHT);
+                Sleep(70);
+                keyUp(VK_RIGHT);
+                keyUp(VK_LCONTROL);
+                keyUp(VK_LWIN);
                 return 1;
             }
-            else if (virtualKey == VK_F8){
+        }
+        else if (wParam == WM_KEYUP || wParam == WM_SYSKEYUP) {
+            if (virtualKey == VK_F6) {
+                return 1;
+            }
+            else if (virtualKey == VK_F7) {
+                return 1;
+            }
+            else if (virtualKey == VK_F8) {
+                return 1;
+            }
+            else if (virtualKey == VK_PRIOR) {
+                return 1;
+            }
+            else if (virtualKey == VK_NEXT) {
                 return 1;
             }
         }
     }
 
-
     return CallNextHookEx(kb_hook, nCode, wParam, lParam);
 }
 
 #ifdef CONSOLE
-
 int main()
 #else
-int CALLBACK  WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nShowCmd)
+int CALLBACK WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nShowCmd)
 #endif
 {
     // Initializing

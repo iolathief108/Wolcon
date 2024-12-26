@@ -5,7 +5,7 @@ file(GLOB SOURCES
         src/*.cpp
         src/*.h)
 
-set(DEBUG false)
+set(DEBUG TRUE)
 
 if (${DEBUG})
     add_executable(Wolcon ${SOURCES})
