@@ -46,7 +46,6 @@ void SetScrollLock(BOOL bState) {
     }
 }
 
-
 void keyDown(BYTE vkCode) {
     // Simulate a key press
     keybd_event(vkCode,
@@ -71,11 +70,14 @@ std::thread* tvThread;
 bool tView;
 
 void taskViewRunner() {
+    if (tView)
+        return;
     tView = true;
-    for (count = 0; count < 335; ++count) {
-        Sleep(1);
-    }
+    // sleep for .5 second
+    std::this_thread::sleep_for(std::chrono::milliseconds(500));
     taskViewPerformed = false;
+    tView = false;
+    tvThread->detach();
 }
 
 bool wheelHandle(bool volUp) {
@@ -89,7 +91,8 @@ bool wheelHandle(bool volUp) {
     }
     else if (volUp && p.y < 3 && p.x > GetSystemMetrics(SM_CXSCREEN) - 3 && p.x < GetSystemMetrics(SM_CXSCREEN)) {
         count = 0;
-        if (!taskViewPerformed) {
+        // not taskViewPerformed  or tvThread is not joinable
+        if (!taskViewPerformed || (tvThread != nullptr && !tvThread->joinable())) {
             keybd_event(VK_LWIN,
                         0x45,
                         KEYEVENTF_EXTENDEDKEY | 0,
@@ -108,12 +111,12 @@ bool wheelHandle(bool volUp) {
                         KEYEVENTF_EXTENDEDKEY | KEYEVENTF_KEYUP,
                         0);
 
-            taskViewPerformed = true;
-
-            if (tView) {
+            // if tvThread is not null and joinable, detach it and delete it
+            if (tvThread != nullptr && tvThread->joinable()) {
                 tvThread->detach();
                 delete tvThread;
             }
+            taskViewPerformed = true;
             tvThread = new std::thread(taskViewRunner);
         }
     }
@@ -178,6 +181,14 @@ LRESULT CALLBACK kb_proc(int nCode, WPARAM wParam, LPARAM lParam) {
                 keyDownUp(VK_MEDIA_NEXT_TRACK);
                 return 1;
             }
+            if (virtualKey == VK_F9) {
+                keyDownUp(VK_VOLUME_DOWN);
+                return 1;
+            }
+            if (virtualKey == VK_F10) {
+                keyDownUp(VK_VOLUME_UP);
+                return 1;
+            }
             if (virtualKey == VK_PRIOR) {
                 // goto previous desktop, press win + ctrl + left
                 keyDown(VK_LWIN);
@@ -207,6 +218,12 @@ LRESULT CALLBACK kb_proc(int nCode, WPARAM wParam, LPARAM lParam) {
                 return 1;
             }
             if (virtualKey == VK_F8) {
+                return 1;
+            }
+            if (virtualKey == VK_F9) {
+                return 1;
+            }
+            if (virtualKey == VK_F10) {
                 return 1;
             }
             if (virtualKey == VK_PRIOR) {
